@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILE_ENV:qwen}
+  ai:
+    openai:
+      api-key: ${DASHSCOPE_API_KEY}
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+
+server:
+  port: 9005
+
+logging:
+  level:
+    root: INFO
+    io.will.springai2poc: DEBUG
+    org.springframework.ai.chat.client.advisor: DEBUG
