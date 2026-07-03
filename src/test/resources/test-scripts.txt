@@ -1,6 +1,7 @@
 curl -v --location 'http://localhost:9005/chat/stream' \
 --header 'Content-Type: application/json' \
 --data '{
-    "query": "Hello!"
+    "query": "Hello!",
+    "conversationId": "001"
 }'
 
