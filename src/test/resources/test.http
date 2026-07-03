@@ -1,0 +1,17 @@
+@baseUrl=http://localhost:9005
+
+### chat
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "query": "Hello!"
+}
+
+### chat stream
+POST {{baseUrl}}/chat/stream
+Content-Type: application/json
+
+{
+  "query": "Hello!"
+}
