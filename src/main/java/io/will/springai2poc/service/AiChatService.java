@@ -6,7 +6,6 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,9 +15,11 @@ import reactor.core.scheduler.Schedulers;
 @Service
 public class AiChatService {
     private final ChatModel defaultChatModel;
+    private final ChatMemory chatMemory;
 
-    public AiChatService(ChatModel defaultFlashModel) {
+    public AiChatService(ChatModel defaultFlashModel, ChatMemory chatMemory) {
         this.defaultChatModel = defaultFlashModel;
+        this.chatMemory = chatMemory;
     }
 
     public Mono<CustomChatResponse> sendMessage(CustomChatRequest request) {
@@ -32,9 +33,7 @@ public class AiChatService {
     }
 
     public Flux<CustomChatResponse> streamMessage(CustomChatRequest request) {
-        MessageWindowChatMemory chatMemory = MessageWindowChatMemory.builder().build();
         Advisor chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
-
         ChatClient chatClient = ChatClient.builder(defaultChatModel).build();
 
         return chatClient.prompt()
