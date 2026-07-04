@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 public class AiChatController {
     private final AiChatService aiChatService;
@@ -25,6 +27,10 @@ public class AiChatController {
 
     @PostMapping(path = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<CustomChatResponse> chatStream(@RequestBody CustomChatRequest request) {
-        return aiChatService.streamMessage(request);
+        CustomChatRequest enrichedRequest = request;
+        if (request.conversationId() == null || request.conversationId().isBlank()) {
+            enrichedRequest = new CustomChatRequest(request.query(), UUID.randomUUID().toString());
+        }
+        return aiChatService.streamMessage(enrichedRequest);
     }
 }
