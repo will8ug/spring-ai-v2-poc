@@ -5,6 +5,7 @@ import io.will.springai2poc.controller.model.CustomChatResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -22,6 +23,14 @@ public class AiChatService {
                         .call()
                         .content())
                 .subscribeOn(Schedulers.boundedElastic())
+                .map(CustomChatResponse::new);
+    }
+
+    public Flux<CustomChatResponse> streamMessage(CustomChatRequest request) {
+        return chatClient.prompt()
+                .user(request.query())
+                .stream()
+                .content()
                 .map(CustomChatResponse::new);
     }
 }

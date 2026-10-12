@@ -8,9 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AiChatControllerIT {
@@ -40,5 +43,29 @@ public class AiChatControllerIT {
                     assertNotNull(response.content());
                     assertFalse(response.content().isBlank());
                 });
+    }
+
+    @Test
+    void testChatStream() {
+        Flux<CustomChatResponse> responses = webTestClient.post()
+                .uri("/chat/stream")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CustomChatRequest("Hello!"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_EVENT_STREAM)
+                .returnResult(CustomChatResponse.class)
+                .getResponseBody();
+
+        AtomicInteger fluxCount = new AtomicInteger();
+        StepVerifier.create(responses)
+                .thenConsumeWhile(response -> {
+                    fluxCount.incrementAndGet();
+                    return response.content() != null && !response.content().isBlank();
+                })
+                .verifyComplete();
+
+        assertTrue(fluxCount.get() > 0);
+        System.out.println(fluxCount.get());
     }
 }
