@@ -3,6 +3,7 @@ package io.will.springai2poc.service;
 import io.will.springai2poc.controller.model.CustomChatRequest;
 import io.will.springai2poc.controller.model.CustomChatResponse;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -28,6 +29,7 @@ public class AiChatService {
 
     public Flux<CustomChatResponse> streamMessage(CustomChatRequest request) {
         return chatClient.prompt()
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, request.conversationId()))
                 .user(request.query())
                 .stream()
                 .content()

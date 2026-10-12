@@ -1,0 +1,19 @@
+@baseUrl=http://localhost:9005
+
+### greeting and name
+POST {{baseUrl}}/chat/stream
+Content-Type: application/json
+
+{
+  "query": "Hi, my name is Bob!",
+  "conversationId": "test-conversation-01"
+}
+
+### ask back the name
+POST {{baseUrl}}/chat/stream
+Content-Type: application/json
+
+{
+  "query": "Do you know my name?",
+  "conversationId": "test-conversation-01"
+}
