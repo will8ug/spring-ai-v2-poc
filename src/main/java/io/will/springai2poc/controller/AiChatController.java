@@ -3,6 +3,7 @@ package io.will.springai2poc.controller;
 import io.will.springai2poc.controller.model.CustomChatRequest;
 import io.will.springai2poc.controller.model.CustomChatResponse;
 import io.will.springai2poc.service.AiChatService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,15 +23,19 @@ public class AiChatController {
 
     @PostMapping(path = "/chat", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<CustomChatResponse> chat(@RequestBody CustomChatRequest request) {
-        return aiChatService.sendMessage(request);
+        return aiChatService.sendMessage(enrichRequest(request));
     }
 
     @PostMapping(path = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<CustomChatResponse> chatStream(@RequestBody CustomChatRequest request) {
+        return aiChatService.streamMessage(enrichRequest(request));
+    }
+
+    private static @NonNull CustomChatRequest enrichRequest(CustomChatRequest request) {
         CustomChatRequest enrichedRequest = request;
         if (request.conversationId() == null || request.conversationId().isBlank()) {
             enrichedRequest = new CustomChatRequest(request.query(), UUID.randomUUID().toString());
         }
-        return aiChatService.streamMessage(enrichedRequest);
+        return enrichedRequest;
     }
 }
