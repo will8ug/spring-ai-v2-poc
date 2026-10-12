@@ -1,10 +1,6 @@
 spring:
   profiles:
     active: ${SPRING_PROFILE_ENV:qwen}
-  ai:
-    openai:
-      api-key: ${DASHSCOPE_API_KEY}
-      base-url: https://dashscope.aliyuncs.com/compatible-mode
 
 server:
   port: 9005
