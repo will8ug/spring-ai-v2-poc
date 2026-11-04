@@ -2,4 +2,4 @@ spring:
   ai:
     openai:
       api-key: ${DASHSCOPE_API_KEY}
-      base-url: ${DASHSCOPE_API_KEY}
+      base-url: ${DASHSCOPE_BASE_URL}
