@@ -16,3 +16,12 @@ Content-Type: application/json
   "query": "Hello!",
   "conversationId": "001"
 }
+
+### stream longer response
+POST {{baseUrl}}/chat/stream
+Content-Type: application/json
+
+{
+  "query": "Introduce the technique of Graph API",
+  "conversationId": "001"
+}
